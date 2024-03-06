@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends
+from fastapi import FastAPI, Request, Form, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from controller.wpp import WhatsappNotification, ChromeDriverController
@@ -28,15 +28,22 @@ def get_contatos():
 
 @app.post('/send')
 def send_message(data: RequestWpp):
-  contact = contacts.get_contact(data.number)
-  if not contact:
-     return JSONResponse({"msg": "contato não encontrado"}, 400)
-  wpp.send_message(contact, data.message)
-  return f'A mensagem foi enviada'
+    contact = contacts.get_contact(data.number)
+    if not contact:
+        return JSONResponse({"msg": "contato não encontrado"}, 400)
+    try:
+        wpp.send_message(contact, data.message)
+        return JSONResponse({"msg": "A mensagem foi enviada"})
+    except Exception as e:
+        return JSONResponse({"msg": str(e)}, 400)
 
 @app.post('/sendNew')
 def send_new_contact(data: RequestWpp):
-    wpp.send_message_new_contact(data.number, data.message)
+    try:
+        wpp.send_message_new_contact(data.number, data.message)
+        return JSONResponse({"msg": "A mensagem foi enviada"})
+    except Exception as e:
+        return JSONResponse({"msg": str(e)}, 400)
 
 @app.post('/sendForm')
 def send_message(request: Request, contato: str = Form(None), message: str = Form(None)):
