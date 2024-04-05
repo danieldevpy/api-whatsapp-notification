@@ -3,11 +3,11 @@ from selenium.webdriver.common.by import By
 
 class ElementsWhatsapp:
   # foto do wpp para reconhecer quando o whatsapp abriu
-  load = (By.CLASS_NAME, "_3WByx")
+  load = (By.CLASS_NAME, 'x1n2onr6')
   # pegar a div que abre as conversas
   div_contacts = (By.CLASS_NAME, 'Mk0Bp')
   # pegar o contato padrão
-  default_contact = (By.CLASS_NAME, "_2H6nH")
+  default_contact = (By.CLASS_NAME, "_ahlk")
   # pegar todas as mensagens que não foram abertas
   waiting_messages = (By.CLASS_NAME, 'aumms1qt')
   # pegar o numero/nome do contato que está aberto
