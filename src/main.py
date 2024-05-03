@@ -3,6 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from controller.wpp import WhatsappNotification, ChromeDriverController
 from controller.list_contacts import ListContacts
+from controller.number import NumberController
 from pydantic import BaseModel
 
 
@@ -40,7 +41,8 @@ def send_message(data: RequestWpp):
 @app.post('/sendNew')
 def send_new_contact(data: RequestWpp):
     try:
-        wpp.send_message_new_contact(data.number, data.message)
+        number = NumberController.check(data.number)
+        wpp.send_message_new_contact(number, data.message)
         return JSONResponse({"msg": "A mensagem foi enviada"})
     except Exception as e:
         return JSONResponse({"msg": str(e)}, 400)

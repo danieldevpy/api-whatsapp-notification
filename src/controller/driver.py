@@ -25,10 +25,23 @@ class ChromeDriverController:
             EC.visibility_of_element_located((type, element_search))
         )
         return element
-    
+        
+    def get_elements(self, element_search, type: None, time=30):
+        elements = WebDriverWait(self.driver, time).until(
+            EC.visibility_of_all_elements_located((type, element_search))
+        )
+        return elements
+
     def get_element_with_tuple(self, element, time=30):
         element = WebDriverWait(self.driver, time).until(
             EC.visibility_of_element_located(element)
+        )
+        return element
+    
+
+    def get_elements_with_tuple(self, element, time=30):
+        element = WebDriverWait(self.driver, time).until(
+            EC.visibility_of_all_elements_located(element)
         )
         return element
     

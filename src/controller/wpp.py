@@ -15,7 +15,8 @@ class WhatsappNotification:
         self.default = None
         self.get_default_contact()
         self.get_all_contacts()
-    
+        self.body = self.chrome.get_element("body", By.TAG_NAME)
+
     def get_default_contact(self) -> Contact:
         try:
             element = self.chrome.get_element_with_tuple(ElementsWhatsapp.default_contact)
@@ -46,24 +47,36 @@ class WhatsappNotification:
             self.default.element.click()
         except Exception as e:
             raise Exception("ERROR SEND MESSAGE - " + str(e))
-        
+    
     def send_message_new_contact(self, number: str, message: str):
+        conversation_element = None
         try:
-            btn = self.chrome.get_element_with_tuple(ElementsWhatsapp.btn_new_contact)
-            btn.click()
-            input = self.chrome.driver.execute_script("return document.activeElement")
-            input.send_keys(number)
-            try:
-                contact = self.chrome.get_element_with_tuple(ElementsWhatsapp.span_new_contact)
-                contact.click()
-                input_message = self.chrome.get_element_with_tuple(ElementsWhatsapp.input_message)
-                if not input_message:
-                    raise Exception("Não foi possivel enviar a mensagem")
-                input_message.click()
-                input_message.send_keys(message, Keys.ENTER)
-                self.default.element.click()
-            except:
-                self.send_message(self.list_contacts.get_contact('default'), f'O contato {number} não foi encontrado, a mensagem que seria enviada era: {message}')
-
+            btn_new = self.chrome.get_element_with_tuple(ElementsWhatsapp.input_new_contact)
+            btn_new.click()
+            input_new = self.chrome.driver.execute_script("return document.activeElement")
+            input_new.send_keys(number)
+            time.sleep(1)
+            elements = self.chrome.get_elements_with_tuple(ElementsWhatsapp.new_contacts_div)
+            for element in elements:
+                try:
+                    span = element.find_element(By.TAG_NAME, 'span')
+                    if span.text == number:
+                        conversation_element = span
+                        break
+                except: pass
+            if not conversation_element:
+                self.key_esc()
+                raise Exception("O contato não foi encontrado")
+            conversation_element.click()
+            input_conversation = self.chrome.driver.execute_script("return document.activeElement")
+            input_conversation.send_keys(message, Keys.ENTER)
+            all_messages = self.chrome.get_elements_with_tuple(ElementsWhatsapp.conversation_message)
+            last_message = all_messages[-1]
+            if not last_message.text == message:
+                raise Exception("A mensagem não foi enviada corretamente")
+            self.key_esc()
         except Exception as e:
-            raise Exception("ERROR SEND MESSAGE NEW CONTACT - " +str(e))
+            raise Exception("ERROR SEND NEW MESSAGE - " + str(e))
+        
+    def key_esc(self):
+        self.body.send_keys(Keys.ESCAPE)
