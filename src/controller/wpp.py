@@ -12,29 +12,22 @@ class WhatsappNotification:
         self.list_contacts = list_contacts
         self.chrome.get_element_with_tuple(ElementsWhatsapp.load, 60)
         time.sleep(1)
-        self.default = None
-        self.get_default_contact()
-        self.get_all_contacts()
         self.body = self.chrome.get_element("body", By.TAG_NAME)
+        self.get_defaults_contact()
 
-    def get_default_contact(self) -> Contact:
+    def get_defaults_contact(self) -> Contact:
         try:
-            element = self.chrome.get_element_with_tuple(ElementsWhatsapp.default_contact)
-            c = Contact('default', element)
-            self.list_contacts.add(c)
-            self.default = c
+            elements = self.chrome.get_elements_with_tuple(ElementsWhatsapp.default_contact)
+            for element in elements:
+                try:
+                    element.click()
+                    name = self.chrome.get_element_with_tuple(ElementsWhatsapp.name_header)
+                    contact = Contact(name.text, element)
+                    self.list_contacts.add(contact)
+                    self.key_esc()
+                except: pass
         except Exception as e:
             raise Exception("ERROR GET DEFAULT CONTACT - " + str(e))
-        
-    def get_all_contacts(self):
-        try:
-            div_contats = self.chrome.driver.find_elements(*ElementsWhatsapp.div_contacts)
-            for div in div_contats:
-                span = div.find_element(By.TAG_NAME, 'span')
-                if span:
-                    self.list_contacts.add(Contact(span.text, div))
-        except Exception as e:
-            raise Exception("ERROR GET CONTACTS - " + str(e))
         
     def send_message(self, c: Contact, message: str):
         try:
@@ -44,7 +37,7 @@ class WhatsappNotification:
                 raise Exception("Não foi possivel enviar a mensagem")
             input.click()
             input.send_keys(message, Keys.ENTER)
-            self.default.element.click()
+            self.key_esc()
         except Exception as e:
             raise Exception("ERROR SEND MESSAGE - " + str(e))
     
@@ -56,7 +49,7 @@ class WhatsappNotification:
             input_new = self.chrome.driver.execute_script("return document.activeElement")
             input_new.send_keys(number)
             time.sleep(1)
-            elements = self.chrome.get_elements_with_tuple(ElementsWhatsapp.new_contacts_div)
+            elements = self.chrome.get_elements_with_tuple(ElementsWhatsapp.new_contacts_div, 10)
             for element in elements:
                 try:
                     span = element.find_element(By.TAG_NAME, 'span')

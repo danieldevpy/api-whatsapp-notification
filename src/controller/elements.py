@@ -7,11 +7,12 @@ class ElementsWhatsapp:
   # pegar a div que abre as conversas
   div_contacts = (By.CLASS_NAME, 'Mk0Bp')
   # pegar o contato padrão
-  default_contact = (By.CLASS_NAME, "_ahlk")
+  # default_contact = (By.CLASS_NAME, "_ahlk")
+  default_contact = (By.XPATH, "//span[@data-icon='pinned2']")
   # pegar todas as mensagens que não foram abertas
   waiting_messages = (By.CLASS_NAME, 'aumms1qt')
   # pegar o numero/nome do contato que está aberto
-  name_header = (By.XPATH, '//*[@id="main"]/header/div[2]/div/div/div/span')
+  name_header = (By.XPATH, '//*[@id="main"]/header/div[2]/div[1]/div/span')
   # pegar todas as mensagens da conversa que está aberta
   conversation_message = (By.CLASS_NAME, "_akbu")
   # Input aonde envia a mensagem para a pessoa

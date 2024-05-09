@@ -30,19 +30,12 @@ def get_contatos():
 @app.post('/send')
 def send_message(data: RequestWpp):
     contact = contacts.get_contact(data.number)
-    if not contact:
-        return JSONResponse({"msg": "contato não encontrado"}, 400)
     try:
-        wpp.send_message(contact, data.message)
-        return JSONResponse({"msg": "A mensagem foi enviada"})
-    except Exception as e:
-        return JSONResponse({"msg": str(e)}, 400)
-
-@app.post('/sendNew')
-def send_new_contact(data: RequestWpp):
-    try:
-        number = NumberController.check(data.number)
-        wpp.send_message_new_contact(number, data.message)
+        if contact:
+            wpp.send_message(contact, data.message)
+        else:
+            number = NumberController.check(data.number)
+            wpp.send_message_new_contact(number, data.message)
         return JSONResponse({"msg": "A mensagem foi enviada"})
     except Exception as e:
         return JSONResponse({"msg": str(e)}, 400)
