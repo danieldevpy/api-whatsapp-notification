@@ -14,6 +14,7 @@ class WhatsappNotification:
         time.sleep(1)
         self.body = self.chrome.get_element("body", By.TAG_NAME)
         self.get_defaults_contact()
+        self.retry = None
 
     def get_defaults_contact(self) -> Contact:
         try:
@@ -39,7 +40,14 @@ class WhatsappNotification:
             input.send_keys(message, Keys.ENTER)
             self.key_esc()
         except Exception as e:
-            raise Exception("ERROR SEND MESSAGE - " + str(e))
+            if not self.retry:
+                self.retry = True
+                self.key_esc()
+                self.get_defaults_contact()
+                self.send_message(c, message)
+            else:
+                self.retry = False
+                raise Exception("ERROR SEND MESSAGE - " + str(e))
     
     def send_message_new_contact(self, number: str, message: str):
         conversation_element = None
