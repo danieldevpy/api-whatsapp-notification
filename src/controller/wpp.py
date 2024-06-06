@@ -37,6 +37,7 @@ class WhatsappNotification:
             if not input:
                 raise Exception("Não foi possivel enviar a mensagem")
             input.click()
+            input.clear()
             input.send_keys(message, Keys.ENTER)
             self.key_esc()
         except Exception as e:
