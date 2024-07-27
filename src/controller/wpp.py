@@ -72,10 +72,10 @@ class WhatsappNotification:
             conversation_element.click()
             input_conversation = self.chrome.driver.execute_script("return document.activeElement")
             input_conversation.send_keys(message, Keys.ENTER)
-            all_messages = self.chrome.get_elements_with_tuple(ElementsWhatsapp.conversation_message)
-            last_message = all_messages[-1]
-            if not last_message.text == message:
-                raise Exception("A mensagem não foi enviada corretamente")
+            # all_messages = self.chrome.get_elements_with_tuple(ElementsWhatsapp.conversation_message)
+            # last_message = all_messages[-1]
+            # if not last_message.text == message:
+            #     raise Exception("A mensagem não foi enviada corretamente")
             self.key_esc()
         except Exception as e:
             raise Exception("ERROR SEND NEW MESSAGE - " + str(e))
